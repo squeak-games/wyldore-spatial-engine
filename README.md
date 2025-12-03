@@ -1,30 +1,35 @@
 # wyldore-spatial-engine
 
-> A work-in-progress XR prototype for **Wyldore** — an ambient audio‑first
-> creature‑companion wellness experience for Android XR wearables.
+> A work-in-progress XR prototype for **Hushwild** — an ambient audio‑first
+> creature‑companion for Android XR wearables.
 > Submitted in support of the **Android XR Developer Catalyst Program**.
 
-This repository holds the spatial‑engine scaffold described in the Hushwild /
-Wyldore catalyst pitch deck (slide 7: *Jetpack XR SceneCore · Projected API ·
+This repository holds the spatial‑engine scaffold described in the Wyldore
+catalyst pitch deck (slide 7: *Jetpack XR SceneCore · Projected API ·
 Compose for XR*; slide 8: *Functional Phone‑Side Prototype · Automated
 Simulation Frameworks · Code & Video Evidence*).
 
-It is intentionally honest about its scope: at the time of this commit it is an
+It is intentionally honest about its scope: at this commit it is an
 **architectural scaffold** — a compiling multi‑module Kotlin/Gradle project
 that wires the named Jetpack XR stack end‑to‑end, with a JVM‑runnable
 simulation harness (`ProjectedTestRule`) standing in for on‑device rendering.
 It is not yet the shipping creature experience; it is the evidence that we
-already know how to build that experience.
+already know how to build it. See
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module structure,
+per‑frame loop, and design rationale.
 
 ---
 
 ## Module layout
 
 | Module | Purpose | Deck reference |
-|---|---|---|
+|---|---|---|---|
 | `:app` | Phone‑side Compose for XR host + Android Health Connect bridge | Slide 2 (Health Connect), Slide 8 (phone prototype) |
 | `:engine` | ECS spatial world, Jetpack XR SceneCore session, Projected‑API HUD layer | Slide 7 (SceneCore, Projected API), Slide 8 (ECS) |
 | `:spatial-audio` | 6DoF acoustic panner — head + source pose model | Slide 7 (Procedural Audio) |
+
+Architecture detail for each module is in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Stack
 
@@ -78,5 +83,6 @@ Apache 2.0 — see [`LICENSE`](LICENSE).
 ## Status
 
 Prototype scaffold — open in good faith as part of the catalyst application.
-Committed 2025‑12‑23; further commits will track the milestone plan in the
-pitch deck (`docs/CATALYST.md`).
+Committed 2025‑12‑23. Future commits track the milestone plan in
+[`docs/TIMELINE.md`](docs/TIMELINE.md) and
+[`docs/CATALYST.md`](docs/CATALYST.md).

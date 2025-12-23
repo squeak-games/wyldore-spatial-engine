@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.health.READ_STEPS" />
     <!-- Health Connect requires the privacy-preserving intent to surface the
          OS consent UI rather than a runtime permission dialog. -->
-    <queries android:package="com.google.android.apps.healthdata" />
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 
     <application
         android:label="Wyldore"

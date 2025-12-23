@@ -1,6 +1,6 @@
 package com.squeakgames.wyldore.audio
 
-import com.squeakgames.wyldore.engine.Vec3
+import com.squeakgames.wyldore.audio.Vec3
 
 /**
  * Six-degrees-of-freedom acoustic panner.
@@ -53,6 +53,3 @@ class SpatialPanner {
         companion object { val NEUTRAL = PanGains(1f, 1f) }
     }
 }
-
-private fun Vec3.length(): Float =
-    kotlin.math.sqrt(x * x + y * y + z * z)

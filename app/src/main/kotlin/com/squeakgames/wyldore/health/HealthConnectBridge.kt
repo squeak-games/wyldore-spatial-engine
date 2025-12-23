@@ -21,19 +21,20 @@ import kotlinx.coroutines.flow.asStateFlow
  * consumed in-memory by the engine, never persisted, and never written to any
  * network surface — there is no network surface wired into [AppContainer].
  */
-class HealthConnectBridge(context: Context) {
+class HealthConnectBridge(private val appContext: Context) {
 
     private val client: HealthConnectClient =
-        HealthConnectClient.getOrCreate(context)
+        HealthConnectClient.getOrCreate(appContext)
 
     private val _heartRate = MutableStateFlow(0)
     val heartRate: StateFlow<Int> = _heartRate.asStateFlow()
 
     val requiredPermissions: Set<String> = setOf(
-        HealthPermission.getReadPermissionFor(HeartRateRecord::class),
+        HealthPermission.getReadPermission(HeartRateRecord::class),
     )
 
-    fun isAvailable(): Boolean = HealthConnectClient.isHealthConnectAvailable(context)
+    fun isAvailable(): Boolean =
+        HealthConnectClient.getSdkStatus(appContext) == HealthConnectClient.SDK_AVAILABLE
 
     /**
      * Prototype pulse — stand-in for the realisation flow that subscribes to

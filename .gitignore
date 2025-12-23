@@ -17,3 +17,5 @@ keystore.properties
 
 # Documentation — tracked locally, not in git
 docs/
+# Kotlin build daemon caches
+.kotlin/

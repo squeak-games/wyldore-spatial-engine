@@ -30,8 +30,7 @@ import com.squeakgames.wyldore.health.HealthConnectBridge
  */
 class MainActivity : ComponentActivity() {
 
-    private val container: AppContainer
-        get() = (application as WyldoreApp).container
+    private val container by lazy { AppContainer(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

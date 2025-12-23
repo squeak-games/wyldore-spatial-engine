@@ -1,5 +1,7 @@
 package com.squeakgames.wyldore.engine
 
+import com.squeakgames.wyldore.audio.Vec3
+
 /**
  * Minimal entity-component-store.
  *
@@ -39,11 +41,3 @@ value class EntityId(val value: Int) {
 }
 
 data class Entity(val id: EntityId, val position: Vec3)
-
-data class Vec3(val x: Float, val y: Float, val z: Float) {
-    operator fun plus(o: Vec3) = Vec3(x + o.x, y + o.y, z + o.z)
-    operator fun minus(o: Vec3) = Vec3(x - o.x, y - o.y, z - o.z)
-    companion object {
-        val ZERO = Vec3(0f, 0f, 0f)
-    }
-}

@@ -9,6 +9,13 @@ android {
 
     defaultConfig { minSdk = 31 }
 
+    buildTypes {
+        create("prototype") {
+            initWith(getByName("debug"))
+            matchingFallbacks += listOf("debug")
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -17,6 +24,5 @@ android {
 }
 
 dependencies {
-    api(project(":engine"))
     implementation(libs.coroutines.core)
 }

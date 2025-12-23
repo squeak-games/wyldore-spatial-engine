@@ -2,6 +2,7 @@ package com.squeakgames.wyldore.engine
 
 import androidx.xr.scenecore.Session
 import com.squeakgames.wyldore.audio.SpatialPanner
+import com.squeakgames.wyldore.audio.Vec3
 
 /**
  * The per-frame bridge from the ECS world to Jetpack XR SceneCore.

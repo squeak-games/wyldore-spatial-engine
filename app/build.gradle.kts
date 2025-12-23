@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -28,6 +29,7 @@ android {
             initWith(getByName("debug"))
             applicationIdSuffix = ".prototype"
             isDebuggable = true
+            matchingFallbacks += listOf("debug")
         }
     }
 

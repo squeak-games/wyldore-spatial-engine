@@ -1,0 +1,19 @@
+# Built artifacts
+build/
+.gradle/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+.cxx/
+hs_err_pid*
+replay_pid*
+
+# Keystore / signing material — never commit
+*.jks
+*.keystore
+keystore.properties
+
+# Demo video render output (large)
+docs/media/raw/

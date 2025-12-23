@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <!-- Health Connect requires the privacy-preserving intent to surface the
+         OS consent UI rather than a runtime permission dialog. -->
+    <queries android:package="com.google.android.apps.healthdata" />
+
+    <application
+        android:label="Wyldore"
+        android:allowBackup="false"
+        android:supportsRtl="true"
+        android:icon="@android:drawable/ic_dialog_info">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode|density|smallestScreenSize|navigation">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <!-- Surface the caster entrypoint on Android XR launcher surfaces. -->
+                <category android:name="android.intent.category.XR_APP" />
+            </intent-filter>
+        </activity>
+
+        <!-- Health Connect action handler — responds to user consent flow. -->
+        <activity-alias
+            android:name=".HealthConnectPermissionActivity"
+            android:targetActivity=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
+    </application>
+
+</manifest>

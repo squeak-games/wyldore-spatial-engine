@@ -3,6 +3,9 @@
 
     <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
     <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Health Connect requires the privacy-preserving intent to surface the
          OS consent UI rather than a runtime permission dialog. -->
     <queries>
@@ -36,6 +39,11 @@
                 <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS" />
             </intent-filter>
         </activity-alias>
+
+        <service
+            android:name=".sensor.SensorCollectorService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

@@ -3,9 +3,14 @@ package com.squeakgames.wyldore.sensor
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class SensorCollectorService : Service() {
 
@@ -15,9 +20,13 @@ class SensorCollectorService : Service() {
     private val _stepCadence = MutableStateFlow(0f)
     val stepCadence: StateFlow<Float> = _stepCadence.asStateFlow()
 
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val microphoneReader by lazy { MicrophoneAmplitudeReader(this) }
+
     override fun onCreate() {
         super.onCreate()
         startForeground(NOTIFICATION_ID, SensorNotificationManager.createNotification(this))
+        startMicrophoneReading()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -27,11 +36,20 @@ class SensorCollectorService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
+        microphoneReader.stop()
+        scope.cancel()
         super.onDestroy()
     }
 
-    fun updateMicrophoneRms(rms: Float) { _microphoneRms.value = rms }
     fun updateStepCadence(cadence: Float) { _stepCadence.value = cadence }
+
+    private fun startMicrophoneReading() {
+        scope.launch {
+            microphoneReader.readAmplitudeLoop { rms ->
+                _microphoneRms.value = rms
+            }
+        }
+    }
 
     companion object {
         const val NOTIFICATION_ID = 1

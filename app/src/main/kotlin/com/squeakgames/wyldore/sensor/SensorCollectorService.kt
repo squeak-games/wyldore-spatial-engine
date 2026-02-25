@@ -22,11 +22,16 @@ class SensorCollectorService : Service() {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val microphoneReader by lazy { MicrophoneAmplitudeReader(this) }
+    private val imuReader by lazy { ImuStepReader(this) }
 
     override fun onCreate() {
         super.onCreate()
         startForeground(NOTIFICATION_ID, SensorNotificationManager.createNotification(this))
         startMicrophoneReading()
+        imuReader.start()
+        scope.launch {
+            imuReader.stepCadence.collect { _stepCadence.value = it }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -37,11 +42,10 @@ class SensorCollectorService : Service() {
 
     override fun onDestroy() {
         microphoneReader.stop()
+        imuReader.stop()
         scope.cancel()
         super.onDestroy()
     }
-
-    fun updateStepCadence(cadence: Float) { _stepCadence.value = cadence }
 
     private fun startMicrophoneReading() {
         scope.launch {

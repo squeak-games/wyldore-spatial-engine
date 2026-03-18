@@ -13,6 +13,7 @@ xrScenecore = "1.0.0-alpha03"
 xrCompose = "1.0.0-alpha03"
 # Health Connect (androidx.health.connect) — biometric data loop declared on slide 2.
 healthConnect = "1.1.0-alpha10"
+playServicesLocation = "21.3.0"
 # Test
 junit = "4.13.2"
 androidxTestCore = "1.6.1"
@@ -34,6 +35,8 @@ androidx-xr-compose = { group = "androidx.xr.compose", name = "compose", version
 
 # Health Connect — ambient biometric gating of the companion creature.
 androidx-health-connect = { group = "androidx.health.connect", name = "connect-client", version.ref = "healthConnect" }
+
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.9.0" }
 

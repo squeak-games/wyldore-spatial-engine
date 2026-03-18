@@ -63,6 +63,9 @@ dependencies {
     // Ambient biometric data loop (slide 2 of the catalyst deck).
     implementation(libs.androidx.health.connect)
 
+    // Geofencing — sanctuary zone detection (local-only, no network).
+    implementation(libs.play.services.location)
+
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.robolectric)

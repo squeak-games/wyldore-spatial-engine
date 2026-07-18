@@ -15,5 +15,5 @@ replay_pid*
 *.keystore
 keystore.properties
 
-# Demo video render output (large)
-docs/media/raw/
+# Documentation — tracked locally, not in git
+docs/

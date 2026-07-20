@@ -16,6 +16,7 @@
     </queries>
 
     <application
+        android:name=".WyldoreApp"
         android:label="Wyldore"
         android:allowBackup="false"
         android:supportsRtl="true"

@@ -3,6 +3,7 @@ package com.squeakgames.wyldore.sensor
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.squeakgames.wyldore.WyldoreApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -32,6 +33,7 @@ class SensorCollectorService : Service() {
         scope.launch {
             imuReader.stepCadence.collect { _stepCadence.value = it }
         }
+        startEsiBridge()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -51,6 +53,22 @@ class SensorCollectorService : Service() {
         scope.launch {
             microphoneReader.readAmplitudeLoop { rms ->
                 _microphoneRms.value = rms
+            }
+        }
+    }
+
+    private fun startEsiBridge() {
+        val container = WyldoreApp.instance.container
+        scope.launch {
+            microphoneRms.collect { rms ->
+                val cadence = _stepCadence.value
+                val zone = container.sanctuaryZoneManager.zoneState.value
+                val dampedRms = if (container.sootheGestureHandler.esiDampingActive.value) {
+                    rms * 0.3f
+                } else {
+                    rms
+                }
+                container.environmentalStressIndex.update(dampedRms, cadence, zone)
             }
         }
     }

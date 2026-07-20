@@ -1,5 +1,7 @@
 package com.squeakgames.wyldore.engine
 
+import android.content.Context
+import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,15 +18,23 @@ enum class BondTier(
     SYMBIOTE("Symbiote", 72, 5),
 }
 
-class BondProgression {
+class BondProgression(context: Context? = null) {
+
+    private val prefs: SharedPreferences? =
+        context?.getSharedPreferences("bond_progression", Context.MODE_PRIVATE)
 
     private val _tier = MutableStateFlow(BondTier.STRANGER)
     val tier: StateFlow<BondTier> = _tier.asStateFlow()
 
-    private var totalCalmMinutes: Int = 0
+    private var totalCalmMinutes: Int = prefs?.getInt(PREF_CALM_MINUTES, 0) ?: 0
+
+    init {
+        _tier.value = resolveTier()
+    }
 
     fun recordCalmMinutes(minutes: Int) {
         totalCalmMinutes += minutes
+        persistCalmMinutes()
         _tier.value = resolveTier()
     }
 
@@ -40,7 +50,12 @@ class BondProgression {
 
     fun reset() {
         totalCalmMinutes = 0
+        persistCalmMinutes()
         _tier.value = BondTier.STRANGER
+    }
+
+    private fun persistCalmMinutes() {
+        prefs?.edit()?.putInt(PREF_CALM_MINUTES, totalCalmMinutes)?.apply()
     }
 
     private fun resolveTier(): BondTier {
@@ -54,6 +69,10 @@ class BondProgression {
         val values = BondTier.values()
         val idx = values.indexOf(current)
         return values.getOrNull(idx + 1)
+    }
+
+    companion object {
+        private const val PREF_CALM_MINUTES = "total_calm_minutes"
     }
 }
 

@@ -1,31 +1,26 @@
 # wyldore-spatial-engine
 
-> A work-in-progress XR prototype for **Hushwild** — an ambient audio‑first
-> creature‑companion for Android XR wearables.
+> A sensor‑driven, ambient audio‑first creature‑companion for Android XR
+> wearables — **Hushwild**.
 > Submitted in support of the **Android XR Developer Catalyst Program**.
 
-This repository holds the spatial‑engine scaffold described in the Wyldore
-catalyst pitch deck (slide 7: *Jetpack XR SceneCore · Projected API ·
-Compose for XR*; slide 8: *Functional Phone‑Side Prototype · Automated
-Simulation Frameworks · Code & Video Evidence*).
+This repository implements the full Hushwild companion pipeline: environmental
+sensors (microphone, IMU, geofence) → composite stress index → 5 companion
+emotional states → spatial audio → user gesture interaction → bond progression
+across sessions.
 
-It is intentionally honest about its scope: at this commit it is an
-**architectural scaffold** — a compiling multi‑module Kotlin/Gradle project
-that wires the named Jetpack XR stack end‑to‑end, with a JVM‑runnable
-simulation harness (`ProjectedTestRule`) standing in for on‑device rendering.
-It is not yet the shipping creature experience; it is the evidence that we
-already know how to build it. See
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module structure,
-per‑frame loop, and design rationale.
+The Jetpack XR stack (SceneCore, Projected API, Compose for XR) is wired
+end‑to‑end through a per‑frame ECS tick loop, with a JVM‑runnable simulation
+harness (`ProjectedTestRule`) standing in for on‑device rendering.
 
 ---
 
 ## Module layout
 
 | Module | Purpose | Deck reference |
-|---|---|---|---|
-| `:app` | Phone‑side Compose for XR host + Android Health Connect bridge | Slide 2 (Health Connect), Slide 8 (phone prototype) |
-| `:engine` | ECS spatial world, Jetpack XR SceneCore session, Projected‑API HUD layer | Slide 7 (SceneCore, Projected API), Slide 8 (ECS) |
+|---|---|---|
+| `:app` | Phone‑side Compose for XR host + sensor foreground service | Slide 2 (Health Connect), Slide 8 (phone prototype), Slide 10 (sensor loop) |
+| `:engine` | ECS spatial world, SceneCore session, companion state, bond progression | Slide 7 (SceneCore, ECS), Slide 11 (bonds) |
 | `:spatial-audio` | 6DoF acoustic panner — head + source pose model | Slide 7 (Procedural Audio) |
 
 Architecture detail for each module is in
@@ -38,7 +33,10 @@ Architecture detail for each module is in
 - **Jetpack XR Compose** (`androidx.xr.compose`) — the "Compose for XR Layer"
 - **Jetpack XR Projected API** — head‑tracked, glanceable HUD panel
 - **Android Health Connect** (`androidx.health.connect`) — ambient biometric loop
-- **Coroutines** for the per‑frame tick scheduling
+- **Play Services Location** (`play-services-location`) — geofencing sanctuary zones
+- **Android AudioRecord** — ambient RMS extraction (ephemeral, no storage)
+- **Android Sensor API** (`android.hardware.Sensor`) — IMU step cadence
+- **Coroutines** for the per‑frame tick scheduling and sensor flows
 
 Versions live in [`gradle/libs.versions.toml`](gradle/libs.versions.toml).
 XR artifact coordinates track the public Android XR alpha channel and should be
@@ -50,6 +48,7 @@ bumped to the stable coordinates when they release.
 gradle wrapper            # generate the gradlew wrapper (binary jar not committed here)
 ./gradlew :app:assemblePrototype
 ./gradlew :engine:test    # runs ProjectedTestRule simulation harness
+./gradlew test            # all module tests
 ```
 
 The phone‑side preview can be exercised on any Android 12+ device or an
@@ -58,23 +57,26 @@ need no emulator round‑trip.
 
 ## Simulation evidence
 
-`engine/src/test/.../SceneCoreHostTest` drives the per‑frame loop on the JVM
-and asserts:
+The project has **6 test files** spanning all modules:
 
-- the creature entity is initialised at a known spatial anchor (~2 m in front
-  of the listener),
-- the projected HUD stays glanceable across the ambient‑light range the
-  on‑device pass expects,
-- the 6DoF panner tracks the creature pose each tick.
+| Test file | What it validates |
+|---|---|
+| `engine/src/test/.../SceneCoreHostTest` | ECS creature init, HUD glanceability, 6DoF panning |
+| `engine/src/test/.../BondProgressionTest` | Bond tier progression (Stranger→Symbiote), reset |
+| `engine/src/test/.../audio/CompanionStateTest` | State enum properties (frequencies, overtones, breathing) |
+| `engine/src/test/.../audio/SpatialAudioEngineTest` | State transitions, spatial position computation |
+| `app/src/test/.../sensor/EnvironmentalStressIndexTest` | ESI computation, smoothing, hysteresis, reset |
+| `app/src/test/.../interaction/SootheGestureHandlerTest` | Gesture state, damping timers, reset |
 
 See **[`docs/CATALYST.md`](docs/CATALYST.md)** for the mapping from each deck
 claim to the file in this repo that substantiates it.
 
 ## Privacy
 
-No accounts, no network, no audio storage. See
-[`docs/PRIVACY.md`](docs/PRIVACY.md). There is no network client anywhere in
-the dependency graph — by construction, not by policy.
+No accounts, no network, no audio storage. Audio buffers are ephemeral (RMS
+extraction with zero retention). See [`docs/PRIVACY.md`](docs/PRIVACY.md). There
+is no network client anywhere in the dependency graph — by construction, not by
+policy.
 
 ## License
 
@@ -82,7 +84,6 @@ Apache 2.0 — see [`LICENSE`](LICENSE).
 
 ## Status
 
-Prototype scaffold — open in good faith as part of the catalyst application.
-Committed 2025‑12‑23. Future commits track the milestone plan in
-[`docs/TIMELINE.md`](docs/TIMELINE.md) and
-[`docs/CATALYST.md`](docs/CATALYST.md).
+Functional alpha — sensor pipeline, ESI, companion states, spatial audio
+positioning, soothe gestures, and bond progression are all implemented and
+tested. See [`docs/TIMELINE.md`](docs/TIMELINE.md) for the full milestone plan.
